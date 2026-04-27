@@ -93,7 +93,4 @@ email = (
 
 @functools.lru_cache(maxsize=128)
 def is_punctuation(ch: str) -> bool:
-    if ch in string.punctuation:
-        return True
-    category = unicodedata.category(ch)
-    return category.startswith("P") or category.startswith("S")
+    pass

@@ -38,21 +38,13 @@ class _MatchObj:
         self._end_shift = end_shift
 
     def start(self, n=0):
-        start = self._match.start() + self._start_shift
-        if n == 0:
-            return start
-        return max(start, self._match.start(n))
+        pass
 
     def end(self, n=0):
-        end = self._match.end() + self._end_shift
-        if n == 0:
-            return end
-        return min(end, self._match.end(n))
+        pass
 
     def group(self, n=0):
-        start = max(self.start(n) - self._match.start(n), 0) or None
-        end = min(self.end(n) - self._match.end(n), 0) or None
-        return self._match.group(n)[start:end]
+        pass
 
     def __getattr__(self, name):
         return getattr(self._match, name)
@@ -76,25 +68,7 @@ class Url(inline.AutoLink):
 
     @classmethod
     def find(cls, text, *, source):
-        for match in itertools.chain(
-            cls.www_pattern.finditer(text), cls.bare_pattern.finditer(text)
-        ):
-            domain = match.group(2)
-            if domain:
-                parts = domain.split(".")
-                if len(parts) < 2 or any("_" in p for p in parts[-2:]):
-                    continue
-            link_text = match.group()
-            if link_text[-1] in ("?", "!", ".", ",", ":", "*", "_", "~"):
-                match = _MatchObj(match, end_shift=-1)
-            elif link_text[-1] == ")" and link_text.count(")") > link_text.count("("):
-                shift = link_text.count(")") - link_text.count("(")
-                match = _MatchObj(match, end_shift=-shift)
-            else:
-                m = re.search(r"&[a-zA-Z]+;$", link_text)
-                if m:
-                    match = _MatchObj(match, end_shift=-len(m.group()))
-            yield match
+        pass
 
 
 class Table(block.BlockElement):
@@ -108,62 +82,19 @@ class Table(block.BlockElement):
 
     @property
     def head(self) -> TableRow:
-        return cast(TableRow, self.children[0])
+        pass
 
     @property
     def num_of_cols(self) -> int:
-        return len(self.head.children)
+        pass
 
     @classmethod
     def match(cls, source):
-        source.anchor()
-        if not TableRow.match(source) or source.context.is_delimiter:
-            return False
-        if TableRow.splitter.search(source.next_line()) is None:
-            return False
-        # consume the first row, we don't use source.consume() here
-        # because that may unexpectedly update the line prefix.
-        source.pos = source.match.end()
-        head = TableRow([TableCell(cell) for cell in source.context.cells])
-        if (
-            not TableRow.match(source)
-            or not source.context.is_delimiter
-            or len(source.context.cells) != len(head.children)
-        ):
-            source.reset()  # invalid table, revert the source position
-            return False
-        source.context.table_info = {
-            "children": [head],
-            "delimiters": source.context.cells,
-        }
-        source.consume()  # consume the second row
-        return True
+        pass
 
     @classmethod
     def parse(cls, source):
-        rv = cls(**source.context.table_info)
-        with source.under_state(rv):
-            for d, th in zip(rv.delimiters, rv.head.children):
-                stripped_d = d.strip()
-                th.header = True
-                if stripped_d[0] == ":" and stripped_d[-1] == ":":
-                    th.align = "center"
-                elif stripped_d[0] == ":":
-                    th.align = "left"
-                elif stripped_d[-1] == ":":
-                    th.align = "right"
-            while not source.exhausted:
-                for e in source.parser._build_block_element_list():
-                    if issubclass(e, (Table, block.Paragraph)):
-                        continue
-                    if e.match(source):
-                        break
-                else:
-                    if TableRow.match(source):
-                        rv.children.append(TableRow.parse(source))
-                        continue
-                break
-        return rv
+        pass
 
 
 class TableRow(block.BlockElement):
@@ -178,33 +109,11 @@ class TableRow(block.BlockElement):
 
     @classmethod
     def match(cls, source: Source) -> Any:
-        line = source.next_line()
-        if not line or not re.match(r" {,3}\S", line):
-            return False
-        parts = cls.splitter.split(line.strip())
-        if parts and not parts[0]:
-            parts.pop(0)
-        if parts and not parts[-1]:
-            parts.pop()
-        if len(parts) < 1:
-            return False
-        source.context.cells = parts
-        source.context.is_delimiter = all(cls.delimiter.match(cell) for cell in parts)
-        return True
+        pass
 
     @classmethod
     def parse(cls, source: Source) -> TableRow:
-        source.consume()
-        parent = cast(Table, source.state)
-        cells: list[str] = source.context.cells[:]
-        if len(cells) < parent.num_of_cols:
-            cells.extend("" for _ in range(parent.num_of_cols - len(cells)))
-        elif len(cells) > parent.num_of_cols:
-            cells = cells[: parent.num_of_cols]
-        cell_elements = [TableCell(cell) for cell in cells]
-        for head, cell in zip(parent.head.children, cell_elements):
-            cell.align = cast(TableCell, head).align
-        return cls(cell_elements)
+        pass
 
 
 class TableCell(block.BlockElement):
@@ -225,19 +134,11 @@ class Alert(block.Quote):
 
     @classmethod
     def match(cls, source):
-        return source.expect_re(
-            r"(?im) {,3}>\s*\[\!(WARNING|NOTE|TIP|IMPORTANT|CAUTION)\]\s*$"
-        )
+        pass
 
     @classmethod
     def parse(cls, source):
-        alert_type = source.match.group(1).upper()
-        source.next_line(require_prefix=False)
-        source.consume()
-        state = cls(alert_type)
-        with source.under_state(state):
-            state.children = source.parser.parse_source(source)
-        return state
+        pass
 
     def __init__(self, alert_type):
         self.alert_type = alert_type

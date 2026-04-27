@@ -79,39 +79,15 @@ class Markdown:
         .. note:: Marko uses a mixin based extension system, the order of extensions
             matters: An extension preceding in order will have higher priorty.
         """
-        if self._setup_done:
-            raise SetupDone()
-        for extension in extensions:
-            if isinstance(extension, str):
-                extension = load_extension(extension)
-
-            self._parser_mixins = extension.parser_mixins + self._parser_mixins
-            self._renderer_mixins = extension.renderer_mixins + self._renderer_mixins
-            self._extra_elements.extend(extension.elements)
+        pass
 
     def _setup_extensions(self) -> None:
         """Install all extensions and set things up."""
-        if self._setup_done:
-            return
-        self.parser = cast(
-            Parser,
-            type("_Parser", tuple(self._parser_mixins) + (self._base_parser,), {})(),
-        )
-        for e in self._extra_elements:
-            self.parser.add_element(e)
-        self.renderer = cast(
-            Renderer,
-            type(
-                "_Renderer",
-                tuple(self._renderer_mixins) + (self._base_renderer,),
-                {},
-            )(),
-        )
-        self._setup_done = True
+        pass
 
     def convert(self, text: str) -> str:
         """Parse and render the given text."""
-        return self.render(self.parse(text))
+        pass
 
     def __call__(self, text: str) -> str:
         return self.convert(text)
@@ -121,17 +97,14 @@ class Markdown:
 
         Override this to preprocess text or handle parsed result.
         """
-        self._setup_extensions()
-        return self.parser.parse(text)
+        pass
 
     def render(self, parsed: Document) -> str:
         """Call ``self.renderer.render(text)``.
 
         Override this to handle parsed result.
         """
-        self._setup_extensions()
-        with self.renderer as r:
-            return r.render(parsed)
+        pass
 
 
 # Inner instance, use the bare convert/parse/render function instead
@@ -144,7 +117,7 @@ def convert(text: str) -> str:
     :param text: text to convert.
     :returns: The rendered result.
     """
-    return _markdown.convert(text)
+    pass
 
 
 def parse(text: str) -> Document:
@@ -153,7 +126,7 @@ def parse(text: str) -> Document:
     :param text: text to parse.
     :returns: the parsed object
     """
-    return _markdown.parse(text)
+    pass
 
 
 def render(parsed: Document) -> str:
@@ -162,7 +135,7 @@ def render(parsed: Document) -> str:
     :param parsed: the parsed object
     :returns: the rendered result.
     """
-    return _markdown.render(parsed)
+    pass
 
 
 __all__ = [

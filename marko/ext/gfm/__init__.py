@@ -38,4 +38,4 @@ gfm = Markdown(extensions=[GFM])
 
 
 def make_extension():
-    return GFM
+    pass

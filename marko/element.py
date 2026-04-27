@@ -16,17 +16,7 @@ class Element:
 
         :param snake_case: Return the element type name in snake case if True
         """
-
-        # Prevent override of BlockElement and InlineElement
-        if (
-            cls.override
-            and cls.__base__
-            and cls.__base__ not in Element.__subclasses__()
-        ):
-            name = cls.__base__.__name__
-        else:
-            name = cls.__name__
-        return camel_to_snake_case(name) if snake_case else name
+        pass
 
     def __repr__(self) -> str:
         try:

@@ -34,13 +34,7 @@ class ASTRenderer(Renderer):
 
     @force_delegate
     def render_raw_text(self, element: inline.RawText) -> dict[str, Any]:
-        return {
-            "element": "raw_text",
-            "children": (
-                html.unescape(element.children) if element.escape else element.children
-            ),
-            "escape": element.escape,
-        }
+        pass
 
     @overload
     def render_children(self, element: list[Element]) -> list[dict[str, Any]]: ...
@@ -52,15 +46,7 @@ class ASTRenderer(Renderer):
     def render_children(self, element: str) -> str: ...
 
     def render_children(self, element):
-        if isinstance(element, list):
-            return [self.render(e) for e in element]
-        if isinstance(element, str):
-            return element
-        rv = {k: v for k, v in element.__dict__.items() if not k.startswith("_")}
-        if "children" in rv:
-            rv["children"] = self.render(rv["children"])
-        rv["element"] = camel_to_snake_case(element.__class__.__name__)
-        return rv
+        pass
 
 
 class XMLRenderer(Renderer):
@@ -92,32 +78,4 @@ class XMLRenderer(Renderer):
         return super().__exit__(*args)
 
     def render_children(self, element: Element) -> str:
-        lines = []
-        if element is self.root_node:
-            lines.append(" " * self.indent + '<?xml version="1.0" encoding="UTF-8"?>')
-            lines.append(
-                " " * self.indent + '<!DOCTYPE document SYSTEM "CommonMark.dtd">'
-            )
-        attrs = {
-            k: v
-            for k, v in element.__dict__.items()
-            if not k.startswith("_") and k not in ("body", "children")
-        }
-        attr_str = "".join(f' {k}="{v}"' for k, v in attrs.items())
-        element_name = camel_to_snake_case(element.__class__.__name__)
-        lines.append(" " * self.indent + f"<{element_name}{attr_str}>")
-        children = getattr(element, "body", None) or getattr(element, "children", None)
-        if children:
-            self.indent += 2
-            if isinstance(children, str):  # type: ignore
-                lines.append(
-                    " " * self.indent
-                    + HTMLRenderer.escape_html(json.dumps(children)[1:-1])  # type: ignore
-                )
-            else:
-                lines.extend(self.render(child) for child in children)  # type: ignore
-            self.indent -= 2
-            lines.append(" " * self.indent + f"</{element_name}>")
-        else:
-            lines[-1] = lines[-1][:-1] + " />"
-        return "\n".join(lines)
+        pass

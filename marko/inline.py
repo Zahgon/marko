@@ -56,9 +56,7 @@ class InlineElement(Element):
     @classmethod
     def find(cls, text: str, *, source: Source) -> Iterator[_Match]:
         """This method should return an iterable containing matches of this element."""
-        if isinstance(cls.pattern, str):
-            cls.pattern = re.compile(cls.pattern)
-        return cls.pattern.finditer(text)
+        pass
 
 
 class Literal(InlineElement):
@@ -69,7 +67,7 @@ class Literal(InlineElement):
 
     @classmethod
     def strip_backslash(cls, text: str) -> str:
-        return cls.pattern.sub(r"\1", text)  # type: ignore[unio]
+        pass
 
 
 class LineBreak(InlineElement):

@@ -8,8 +8,8 @@ Reference: `vinta's pangu project <https://github.com/vinta/pangu.js>`_
 
 Example::
 
-    input: 中国有13亿人口
-    output: 中国有<span class="pangu"></span>13<span class="pangu"></span>亿人口
+    input: ä¸­å›½æœ‰13äº¿äººå�£
+    output: ä¸­å›½æœ‰<span class="pangu"></span>13<span class="pangu"></span>äº¿äººå�£
 
     from marko import Markdown
 
@@ -36,11 +36,8 @@ PANGU_RE = re.compile(
 
 class PanguRendererMixin:
     def render_raw_text(self, element):
-        rv = super().render_raw_text(element)
-        if not isinstance(self, HTMLRenderer):
-            return rv
-        return PANGU_RE.sub('<span class="pangu"></span>', rv)
+        pass
 
 
 def make_extension():
-    return MarkoExtension(renderer_mixins=[PanguRendererMixin])
+    pass

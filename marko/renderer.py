@@ -60,24 +60,7 @@ class Renderer:
         :param element: a element to be rendered.
         :returns: the output string or any values.
         """
-        from .block import Document
-
-        # Store the root node since it may be required by the render functions
-        if not self.root_node:  # pragma: no cover
-            if isinstance(element, Document):
-                self.root_node = element
-            else:
-                # Make a dummy root node from it
-                self.root_node = Document()
-                self.root_node.children = [element]
-        if hasattr(element, "get_type"):
-            func_name = "render_" + element.get_type(snake_case=True)
-            render_func = getattr(self, func_name, None)
-            if render_func is not None and (
-                getattr(render_func, "_force_delegate", False) or self.delegate
-            ):
-                return render_func(element)
-        return self.render_children(element)
+        pass
 
     def render_children(self, element: Any) -> Any:
         """
@@ -91,8 +74,7 @@ class Renderer:
 
         :param element: a branch node who has children attribute.
         """
-        rendered = [self.render(child) for child in element.children]  # type: ignore
-        return "".join(rendered)
+        pass
 
 
 _F = TypeVar("_F", bound=Callable)
@@ -102,5 +84,4 @@ def force_delegate(func: _F) -> _F:
     """
     A decorator to allow delegation for the specified method even if cls.delegate = False
     """
-    func._force_delegate = True  # type: ignore[attr-defined]
-    return func
+    pass
